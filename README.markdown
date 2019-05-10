@@ -81,13 +81,14 @@ Descriptive and consistent naming makes software easier to read and understand. 
 - generally avoiding abbreviations
 - using precedent for names
 - preferring methods and properties to free functions
-- casing acronyms and initialisms uniformly up or down
+- casing acronyms and initialisms uniformly up or down (To be followed: https://stackoverflow.com/a/27172000/1083859)
 - giving the same base name to methods that share the same meaning
 - avoiding overloads on return type
 - choosing good parameter names that serve as documentation
 - preferring to name the first parameter instead of including its name in the method name, except as mentioned under Delegates
 - labeling closure and tuple parameters
 - taking advantage of default parameters
+- prefer having own files for each new classes/structs
 
 ### Prose
 
@@ -315,6 +316,9 @@ else {
 
 * Colons always have no space on the left and one space on the right. Exceptions are the ternary operator `? :`, empty dictionary `[:]` and `#selector` syntax `addTarget(_:action:)`.
 
+* Trim whitespaces from empty lines or end of the line. Setup below Xcode setting to automatically trim whitespaces.
+    - Xcode -> Preferences -> Text Editing -> Check automatically trim trailing whitespace & including whitespace-only lines
+
 **Preferred**:
 ```swift
 class TestDatabase: Database {
@@ -433,7 +437,8 @@ var diameter: Double {
 
 ### Final
 
-Marking classes or members as `final` in tutorials can distract from the main topic and is not required. Nevertheless, use of `final` can sometimes clarify your intent and is worth the cost. In the below example, `Box` has a particular purpose and customization in a derived class is not intended. Marking it `final` makes that clear.
+Use `final` when classes are not indented to be subclassed. Prefer start with `final` classes and change only when need to be subclassed.
+In the below example, `Box` has a particular purpose and customization in a derived class is not intended. Marking it `final` makes that clear.
 
 ```swift
 // Turn any generic type into a reference type using this Box class.
@@ -504,7 +509,8 @@ let success = reticulateSplines(
   spline: splines,
   adjustmentFactor: 1.3,
   translateConstant: 2,
-  comment: "normalize the display")
+  comment: "normalize the display"
+)
 ```
 
 ## Closure Expressions
@@ -545,15 +551,46 @@ attendeeList.sort { a, b in
 }
 ```
 
-Chained methods using trailing closures should be clear and easy to read in context. Decisions on spacing, line breaks, and when to use named versus anonymous arguments is left to the discretion of the author. Examples:
+Chained methods using trailing closures should be clear and easy to read in context.
+Guidelines for method chains:
+  * Use trailing closures if there is only one closure argument in the end
+  * Don't add parentheses for trailing closures
+  * Leave one whitespace before close brace & after open brace
+  * Use anonymous arguments only if the expression inside closure in not complex
+  * Wrap method chains if more than 3 functions are chained or if number of characters exceeds 80 characters
+  * For reactive extensions,
+    - Keep the first potential method chain in the first line except if number of characters exceeds 100 characters
+    - Don't wrap .rx to a newline
 
+Examples:
+
+**Preferred**:
 ```swift
 let value = numbers.map { $0 * 2 }.filter { $0 % 3 == 0 }.index(of: 90)
 
 let value = numbers
+  .map { $0 * 2 }
+  .filter { $0 > 50 }
+  .map { $0 + 10 }
+
+crossButton.rx.tap
+  .subscribe()
+  .disposed(by: disposeBag)
+```
+**Not Preferred**:
+```swift
+let value = numbers.map {$0 * 2}.filter {$0 % 3 == 0}.index(of: 90)
+
+let value = numbers
   .map {$0 * 2}
-  .filter {$0 > 50}
+  .filter ({ $0 > 50 })
   .map {$0 + 10}
+
+crossButton
+  .rx
+  .tap
+  .subscribe()
+  .disposed(by: disposeBag)
 ```
 
 ## Types
@@ -811,11 +848,11 @@ resource.request().onComplete { [weak self] response in
 
 ## Access Control
 
-Full access control annotation in tutorials can distract from the main topic and is not required. Using `private` and `fileprivate` appropriately, however, adds clarity and promotes encapsulation. Prefer `private` to `fileprivate`; use `fileprivate` only when the compiler insists.
+Using `private` and `fileprivate` appropriately, however, adds clarity and promotes encapsulation. Prefer `private` to `fileprivate`; use `fileprivate` only when the compiler insists.
 
 Only explicitly use `open`, `public`, and `internal` when you require a full access control specification.
 
-Use access control as the leading property specifier. The only things that should come before access control are the `static` specifier or attributes such as `@IBAction`, `@IBOutlet` and `@discardableResult`.
+Use access control as the leading property specifier. The only things that should come before access control are the `static` specifier or attributes such as `@IBAction`, `@IBOutlet` and `@discardableResult`. Don't add line breaks between attributes/access modifiers
 
 **Preferred**:
 ```swift
@@ -833,6 +870,10 @@ fileprivate let message = "Great Scott!"
 class TimeMachine {  
   lazy dynamic private var fluxCapacitor = FluxCapacitor()
 }
+
+private
+dynamic
+lazy var fluxCapacitor = FluxCapacitor()
 ```
 
 ## Control Flow
@@ -1054,9 +1095,7 @@ Do not use emoji in your projects. For those readers who actually type in their 
 
 ## Organization and Bundle Identifier
 
-Where an Xcode project is involved, the organization should be set to `Ray Wenderlich` and the Bundle Identifier set to `com.razeware.TutorialName` where `TutorialName` is the name of the tutorial project.
-
-![Xcode Project settings](screens/project_settings.png)
+Where an Xcode project is involved, the organization should be set to `DocTalk Solutions Pvt. Ltd.` and the Bundle Identifier set to `com.doctalk.ProjectName` where `ProjectName` is the name of the project.
 
 ## Copyright Statement
 
@@ -1064,33 +1103,9 @@ The following copyright statement should be included at the top of every source
 file:
 
 ```swift
-/// Copyright (c) 2019 Razeware LLC
-/// 
-/// Permission is hereby granted, free of charge, to any person obtaining a copy
-/// of this software and associated documentation files (the "Software"), to deal
-/// in the Software without restriction, including without limitation the rights
-/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-/// copies of the Software, and to permit persons to whom the Software is
-/// furnished to do so, subject to the following conditions:
-/// 
-/// The above copyright notice and this permission notice shall be included in
-/// all copies or substantial portions of the Software.
-/// 
-/// Notwithstanding the foregoing, you may not use, copy, modify, merge, publish,
-/// distribute, sublicense, create a derivative work, and/or sell copies of the
-/// Software in any work that is designed, intended, or marketed for pedagogical or
-/// instructional purposes related to programming, coding, application development,
-/// or information technology.  Permission for such use, copying, modification,
-/// merger, publication, distribution, sublicensing, creation of derivative works,
-/// or sale is expressly withheld.
-/// 
-/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-/// THE SOFTWARE.
+/// Copyright (c) 2019 DocTalk Solutions Pvt. Ltd
+///
+/// <TBD>
 ```
 
 ## Smiley Face
