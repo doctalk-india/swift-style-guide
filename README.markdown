@@ -1,7 +1,7 @@
-# The Official raywenderlich.com Swift Style Guide.
-### Updated for Swift 4.2
+# Forked from RayWenderlich Swift Style Guide and thanks to the entire RayWenderlich team.
 
-This style guide is different from others you may see, because the focus is centered on readability for print and the web. We created this style guide to keep the code in our books, tutorials, and starter kits nice and consistent — even though we have many different authors working on the books.
+## The Official Pulse Swift Style Guide.
+### Updated for Swift 4.2
 
 Our overarching goals are clarity, consistency and brevity, in that order.
 
@@ -221,7 +221,7 @@ For UIKit view controllers, consider grouping lifecycle, custom accessors, and I
 
 ### Unused Code
 
-Unused (dead) code, including Xcode template code and placeholder comments should be removed. An exception is when your tutorial or book instructs the user to use the commented code.
+Unused (dead) code, including Xcode template code and placeholder comments should be removed. An exception is when your documentation instructs the user to use the commented code.
 
 Aspirational methods not directly associated with the tutorial whose implementation simply calls the superclass should also be removed. This includes any empty/unused UIApplicationDelegate methods.
 
